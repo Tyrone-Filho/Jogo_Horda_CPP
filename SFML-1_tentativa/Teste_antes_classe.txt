@@ -1,0 +1,82 @@
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include <iostream>
+
+void moverPlayer(sf::RectangleShape& corpo, sf::RectangleShape& cabeca, float posX = 0.f, float posY = 0.f) {
+    corpo.setPosition(sf::Vector2f(corpo.getPosition().x + posX, cabeca.getPosition().y + posY + 10));
+    cabeca.setPosition(sf::Vector2f(cabeca.getPosition().x + posX, cabeca.getPosition().y + posY));
+};
+
+std::vector<sf::RectangleShape> criarPlayer(const float pos_dif_X=0, const float pos_dif_Y=0) {
+    std::vector<sf::RectangleShape> lista;
+    lista.push_back(sf::RectangleShape(sf::Vector2f(20.f, 30.f))); // corpo lista[0]
+    lista.push_back(sf::RectangleShape(sf::Vector2f(10.f, 10.f))); // cabeca lista[1]
+	lista[0].setPosition({ 0.f + pos_dif_X,0.f + pos_dif_Y});
+    lista[1].setPosition({ 5.f + pos_dif_X,0.f + pos_dif_Y });
+	moverPlayer(lista[0], lista[1]);
+    return lista;
+}
+
+
+int main()
+{
+	sf::Vector2u tela{ 600, 600 };
+    sf::RenderWindow window(sf::VideoMode(tela), "Carinha que anda");
+
+    std::vector<sf::RectangleShape> lista_player = criarPlayer(tela.x / 2);
+	sf::RectangleShape &corpo = lista_player[0];
+    sf::RectangleShape &cabeca = lista_player[1];
+
+	//std::vector<sf::RectangleShape>lista_seila = criarPlayer(30.f,30.f); // cria um player a mais na posicao 30,30
+
+    /*
+    sf::RectangleShape corpo(sf::Vector2f(20.f, 30.f));
+    sf::RectangleShape cabeca(sf::Vector2f(10.f, 10.f));
+    cabeca.setPosition({5.f,0.f}); //NAO CONSIGUI ACHAR FORMA DE SETAR AAAAAAAAAAAAAAAAAAAAAAA
+	moverPlayer(corpo, cabeca); // ai tive que usar essas 2 linhas
+
+    std::vector<sf::RectangleShape*> lista_player = { &cabeca, &corpo };
+    */
+
+	// Nesse for se usar o metodo de *lista_player  usar * em auto aqui se nao usar &
+    for (auto& objeto : lista_player) {
+        objeto.setFillColor(sf::Color::White); // e -> se for * e . se for &
+    }
+
+    while (window.isOpen())
+    {
+        while (std::optional<sf::Event> event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+                window.close();
+            /*
+            if ((corpo.getPosition().x < (tela.x - corpo.getSize().x)) && (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))) {
+                moverPlayer(corpo, cabeca,10.f);
+            }*/
+
+            
+            if (auto* tecla = event->getIf<sf::Event::KeyPressed>())
+            {
+                if ((corpo.getPosition().x < (tela.x - corpo.getSize().x)) && (tecla->code == sf::Keyboard::Key::D)) {
+                    moverPlayer(corpo, cabeca,10.f);
+                }else if ((corpo.getPosition().x > 0) && (tecla->code == sf::Keyboard::Key::A)) {
+                    moverPlayer(corpo, cabeca, -10.f);
+                }
+            }
+            
+        }
+        window.clear();
+        // Mesmo que o for de cima
+
+        for (const auto& objeto : lista_player) {
+			window.draw(objeto); // colocar * se tiver * em cima se for & n colocar nada pq o objeto ja e referencia
+        }
+        /* // O de criar mais um player esta comentado ent esse tbm e pra ta
+        for (const auto& seila : lista_seila) {
+			window.draw(seila);
+        }
+        */
+        window.display();
+    }
+    return 0;
+}
