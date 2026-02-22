@@ -177,7 +177,7 @@ int main()
     auto* pointerJ = &jogador;
     float velocidade = 1.f;
 
-    std::cout << tempo_max << " " <<cooldown_inimigos;
+    std::cout << "Voce tem que sobreviver por " << tempo_max << "segundos\nE os Inimigos Nascem a cada" << cooldown_inimigos << " segundos\n";
     
     std::vector<Inimigo> Inimigos;
     //Inimigo inimigo{ window, 300.f,300.f,2.f, sf::Color::Green };
